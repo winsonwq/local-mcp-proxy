@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "filesystem-via-proxy": {
+      "name": "Filesystem Server",
+      "description": "Filesystem server via HTTP proxy",
+      "type": "http",
+      "transport": {
+        "type": "http",
+        "url": "http://localhost:3000/api/servers/filesystem/mcp",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "timeout": 30000
+      }
+    },
+    "filesystem-direct": {
+      "name": "Filesystem Server (Direct)",
+      "description": "Direct connection to filesystem server",
+      "type": "stdio",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "/Users/aqiu/Desktop",
+          "/Users/aqiu/projects"
+        ],
+        "workingDir": ".",
+        "env": {
+          "NODE_ENV": "production"
+        }
+      }
+    }
+  }
+} 

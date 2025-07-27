@@ -1,0 +1,36 @@
+{
+  "proxy": {
+    "port": 3000,
+    "host": "0.0.0.0",
+    "cors": true,
+    "rateLimit": 1000,
+    "requestTimeout": 30000,
+    "maxRequestSize": "10mb",
+    "enableMetrics": true,
+    "enableLogging": true
+  },
+  "servers": {
+    "filesystem": {
+      "name": "MCP Filesystem Server",
+      "description": "Official MCP Filesystem Server",
+      "type": "stdio",
+      "enabled": true,
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "/Users/aqiu/Desktop",
+          "/Users/aqiu/projects"
+        ],
+        "workingDir": ".",
+        "env": {
+          "NODE_ENV": "production"
+        },
+        "retryAttempts": 3,
+        "retryDelay": 1000
+      }
+    }
+  }
+} 
