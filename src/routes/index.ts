@@ -131,23 +131,24 @@ export function createRoutes(
     }
   });
 
-  // MCP Protocol Support for individual servers
-  // Initialize endpoint for specific server
-  router.post('/servers/:id/mcp/initialize', (req, res) => {
-    const { method, params } = req.body;
+  // Unified MCP Protocol endpoint for specific server
+  router.post('/servers/:id/mcp', async (req, res) => {
+    const { method, params, id } = req.body;
     const serverId = req.params.id;
     
-    if (method !== 'initialize') {
+    // Validate JSON-RPC format
+    if (!req.body.jsonrpc || req.body.jsonrpc !== '2.0') {
       return res.status(400).json({
         jsonrpc: '2.0',
         id: req.body.id,
         error: {
           code: -32600,
-          message: 'Invalid Request'
+          message: 'Invalid Request: jsonrpc must be "2.0"'
         }
       });
     }
 
+    // Check if server exists
     const server = serverManager.getServerStatus(serverId);
     if (!server) {
       return res.status(404).json({
@@ -160,157 +161,90 @@ export function createRoutes(
       });
     }
 
-    res.json({
-      jsonrpc: '2.0',
-      id: req.body.id,
-      result: {
-        protocolVersion: '2024-11-05',
-        capabilities: {
-          tools: {}
-        },
-        serverInfo: {
-          name: server.name,
-          version: '1.0.0'
-        }
-      }
-    });
-  });
-
-  // List tools endpoint for specific server
-  router.post('/servers/:id/mcp/tools/list', async (req, res) => {
-    const { method, params, id } = req.body;
-    const serverId = req.params.id;
-    
-    if (method !== 'tools/list') {
-      return res.status(400).json({
-        jsonrpc: '2.0',
-        id,
-        error: {
-          code: -32600,
-          message: 'Invalid Request'
-        }
-      });
-    }
-
     try {
-      const server = serverManager.getServerStatus(serverId);
-      if (!server) {
-        return res.status(404).json({
-          jsonrpc: '2.0',
-          id,
-          error: {
-            code: -32601,
-            message: 'Server not found'
+      switch (method) {
+        case 'initialize':
+          res.json({
+            jsonrpc: '2.0',
+            id: req.body.id,
+            result: {
+              protocolVersion: '2024-11-05',
+              capabilities: {
+                tools: {}
+              },
+              serverInfo: {
+                name: server.name,
+                version: '1.0.0'
+              }
+            }
+          });
+          break;
+
+        case 'tools/list':
+          const tools = server.tools.map(tool => ({
+            name: tool.name,
+            description: tool.description,
+            inputSchema: tool.inputSchema
+          }));
+
+          res.json({
+            jsonrpc: '2.0',
+            id: req.body.id,
+            result: {
+              tools: tools
+            }
+          });
+          break;
+
+        case 'tools/call':
+          const { name, arguments: args } = params;
+          
+          const result = await serverManager.callTool({
+            serverId,
+            toolName: name,
+            arguments: args
+          });
+
+          if (!result.success) {
+            return res.status(500).json({
+              jsonrpc: '2.0',
+              id: req.body.id,
+              error: {
+                code: -32603,
+                message: result.error || 'Tool call failed'
+              }
+            });
           }
-        });
+
+          res.json({
+            jsonrpc: '2.0',
+            id: req.body.id,
+            result: {
+              content: result.data
+            }
+          });
+          break;
+
+        default:
+          res.status(400).json({
+            jsonrpc: '2.0',
+            id: req.body.id,
+            error: {
+              code: -32601,
+              message: 'Method not found'
+            }
+          });
       }
-
-      const tools = server.tools.map(tool => ({
-        name: tool.name,
-        description: tool.description,
-        inputSchema: tool.inputSchema
-      }));
-
-      res.json({
-        jsonrpc: '2.0',
-        id,
-        result: {
-          tools: tools
-        }
-      });
     } catch (error) {
       res.status(500).json({
         jsonrpc: '2.0',
-        id,
+        id: req.body.id,
         error: {
           code: -32603,
           message: 'Internal error',
           data: error instanceof Error ? error.message : 'Unknown error'
         }
       });
-    }
-  });
-
-  // Call tool endpoint for specific server
-  router.post('/servers/:id/mcp/tools/call', async (req, res) => {
-    const { method, params, id } = req.body;
-    const serverId = req.params.id;
-    
-    if (method !== 'tools/call') {
-      return res.status(400).json({
-        jsonrpc: '2.0',
-        id,
-        error: {
-          code: -32600,
-          message: 'Invalid Request'
-        }
-      });
-    }
-
-    try {
-      const { name, arguments: args } = params;
-      
-      const result = await serverManager.callTool({
-        serverId,
-        toolName: name,
-        arguments: args
-      });
-
-      if (!result.success) {
-        return res.status(500).json({
-          jsonrpc: '2.0',
-          id,
-          error: {
-            code: -32603,
-            message: result.error || 'Tool call failed'
-          }
-        });
-      }
-
-      res.json({
-        jsonrpc: '2.0',
-        id,
-        result: {
-          content: result.data
-        }
-      });
-    } catch (error) {
-      res.status(500).json({
-        jsonrpc: '2.0',
-        id,
-        error: {
-          code: -32603,
-          message: 'Internal error',
-          data: error instanceof Error ? error.message : 'Unknown error'
-        }
-      });
-    }
-  });
-
-  // Generic MCP endpoint for specific server
-  router.post('/servers/:id/mcp', async (req, res) => {
-    const { method, params, id } = req.body;
-    const serverId = req.params.id;
-    
-    switch (method) {
-      case 'initialize':
-        return res.redirect(307, `/api/servers/${serverId}/mcp/initialize`);
-      
-      case 'tools/list':
-        return res.redirect(307, `/api/servers/${serverId}/mcp/tools/list`);
-      
-      case 'tools/call':
-        return res.redirect(307, `/api/servers/${serverId}/mcp/tools/call`);
-      
-      default:
-        res.status(400).json({
-          jsonrpc: '2.0',
-          id,
-          error: {
-            code: -32601,
-            message: 'Method not found'
-          }
-        });
     }
   });
 
@@ -330,13 +264,8 @@ export function createRoutes(
         info: '/api/info'
       },
       mcpProtocol: {
-        description: 'Each server supports the MCP protocol directly',
-        endpoints: {
-          initialize: 'POST /api/servers/:id/mcp/initialize',
-          toolsList: 'POST /api/servers/:id/mcp/tools/list',
-          toolsCall: 'POST /api/servers/:id/mcp/tools/call',
-          generic: 'POST /api/servers/:id/mcp'
-        },
+        description: 'Each server supports the MCP protocol through a unified endpoint',
+        endpoint: 'POST /api/servers/:id/mcp',
         example: {
           initialize: {
             jsonrpc: '2.0',

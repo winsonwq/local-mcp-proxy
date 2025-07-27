@@ -106,7 +106,7 @@ Each server has independent MCP protocol endpoints that can be connected by othe
 #### Initialize Connection
 
 ```bash
-curl -X POST http://localhost:3000/api/servers/filesystem/mcp/initialize \
+curl -X POST http://localhost:3000/api/servers/filesystem/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -119,7 +119,7 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/initialize \
 #### List Tools
 
 ```bash
-curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/list \
+curl -X POST http://localhost:3000/api/servers/filesystem/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -132,7 +132,7 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/list \
 #### Call Tools
 
 ```bash
-curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/call \
+curl -X POST http://localhost:3000/api/servers/filesystem/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -196,10 +196,7 @@ Examples:
 
 ### MCP Protocol Endpoints (per server)
 
-- `POST /api/servers/:id/mcp/initialize` - MCP initialization
-- `POST /api/servers/:id/mcp/tools/list` - MCP tools list
-- `POST /api/servers/:id/mcp/tools/call` - MCP tool call
-- `POST /api/servers/:id/mcp` - Generic MCP endpoint
+- `POST /api/servers/:id/mcp` - Unified MCP protocol endpoint (supports initialize, tools/list, tools/call)
 
 ## Testing
 

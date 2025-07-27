@@ -106,7 +106,7 @@ curl http://localhost:3000/api/tools
 #### 初始化连接
 
 ```bash
-curl -X POST http://localhost:3000/api/servers/filesystem/mcp/initialize \
+curl -X POST http://localhost:3000/api/servers/filesystem/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -119,7 +119,7 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/initialize \
 #### 列出工具
 
 ```bash
-curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/list \
+curl -X POST http://localhost:3000/api/servers/filesystem/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -132,7 +132,7 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/list \
 #### 调用工具
 
 ```bash
-curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/call \
+curl -X POST http://localhost:3000/api/servers/filesystem/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -196,10 +196,7 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/call \
 
 ### MCP 协议端点（每个服务器）
 
-- `POST /api/servers/:id/mcp/initialize` - MCP 初始化
-- `POST /api/servers/:id/mcp/tools/list` - MCP 工具列表
-- `POST /api/servers/:id/mcp/tools/call` - MCP 工具调用
-- `POST /api/servers/:id/mcp` - 通用 MCP 端点
+- `POST /api/servers/:id/mcp` - 统一的 MCP 协议端点（支持 initialize、tools/list、tools/call）
 
 ## 测试
 

@@ -97,17 +97,17 @@ class MCPServer {
 
       console.log('\n🔗 MCP Protocol Support (per-server):')
       console.log(`  # Initialize MCP connection for filesystem server`)
-      console.log(`  curl -X POST http://${host}:${port}/api/servers/filesystem/mcp/initialize \\`)
+      console.log(`  curl -X POST http://${host}:${port}/api/servers/filesystem/mcp \\`)
       console.log(`    -H "Content-Type: application/json" \\`)
       console.log(`    -d '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}'`)
 
       console.log(`  # List tools for filesystem server (MCP protocol)`)
-      console.log(`  curl -X POST http://${host}:${port}/api/servers/filesystem/mcp/tools/list \\`)
+      console.log(`  curl -X POST http://${host}:${port}/api/servers/filesystem/mcp \\`)
       console.log(`    -H "Content-Type: application/json" \\`)
       console.log(`    -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}'`)
 
       console.log(`  # Call tool on filesystem server (MCP protocol)`)
-      console.log(`  curl -X POST http://${host}:${port}/api/servers/filesystem/mcp/tools/call \\`)
+      console.log(`  curl -X POST http://${host}:${port}/api/servers/filesystem/mcp \\`)
       console.log(`    -H "Content-Type: application/json" \\`)
       console.log(`    -d '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "list_directory", "arguments": {"path": "."}}}'`)
 
