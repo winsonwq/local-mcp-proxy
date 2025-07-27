@@ -1,28 +1,30 @@
 # MCP HTTP Proxy Server
 
-一个用于 Model Context Protocol (MCP) 服务器的 HTTP 代理，支持多种传输协议并提供统一的 API 接口。
+An HTTP proxy for Model Context Protocol (MCP) servers that supports multiple transport protocols and provides a unified API interface.
 
-## 功能特性
+[English](README.md) | [中文](README.zh-CN.md)
 
-- 🔄 **多协议支持**: 支持 stdio、HTTP、WebSocket 传输协议
-- 🌐 **HTTP API**: 提供 RESTful API 接口
-- 🔗 **MCP 协议支持**: 每个服务器都有独立的 MCP 协议端点，可作为 MCP 服务器被其他客户端连接
-- 📊 **监控指标**: 实时性能监控和统计
-- 🔧 **配置管理**: 灵活的服务器配置
-- 🚀 **批量操作**: 支持批量工具调用
-- 🛡️ **安全**: CORS 支持、请求限制、超时控制
+## Features
 
-## 快速开始
+- 🔄 **Multi-Protocol Support**: Supports stdio, HTTP, and WebSocket transport protocols
+- 🌐 **HTTP API**: Provides RESTful API interface
+- 🔗 **MCP Protocol Support**: Each server has independent MCP protocol endpoints that can be connected by other MCP clients
+- 📊 **Monitoring Metrics**: Real-time performance monitoring and statistics
+- 🔧 **Configuration Management**: Flexible server configuration
+- 🚀 **Batch Operations**: Supports batch tool calls
+- 🛡️ **Security**: CORS support, request limiting, timeout control
 
-### 安装依赖
+## Quick Start
+
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 配置服务器
+### Configure Servers
 
-编辑 `config/mcp-servers.json` 文件：
+Edit the `config/mcp-servers.json` file:
 
 ```json
 {
@@ -61,19 +63,19 @@ npm install
 }
 ```
 
-### 启动服务器
+### Start Server
 
 ```bash
 npm start
 ```
 
-服务器将在 `http://localhost:3000` 启动。
+The server will start at `http://localhost:3000`.
 
-## API 使用
+## API Usage
 
-### 常规 HTTP API
+### Regular HTTP API
 
-#### 调用工具
+#### Call Tools
 
 ```bash
 curl -X POST http://localhost:3000/api/call \
@@ -85,23 +87,23 @@ curl -X POST http://localhost:3000/api/call \
   }'
 ```
 
-#### 查看服务器状态
+#### View Server Status
 
 ```bash
 curl http://localhost:3000/api/servers
 ```
 
-#### 查看可用工具
+#### View Available Tools
 
 ```bash
 curl http://localhost:3000/api/tools
 ```
 
-### MCP 协议支持
+### MCP Protocol Support
 
-每个服务器都有独立的 MCP 协议端点，可以被其他 MCP 客户端连接。
+Each server has independent MCP protocol endpoints that can be connected by other MCP clients.
 
-#### 初始化连接
+#### Initialize Connection
 
 ```bash
 curl -X POST http://localhost:3000/api/servers/filesystem/mcp/initialize \
@@ -114,7 +116,7 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/initialize \
   }'
 ```
 
-#### 列出工具
+#### List Tools
 
 ```bash
 curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/list \
@@ -127,7 +129,7 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/list \
   }'
 ```
 
-#### 调用工具
+#### Call Tools
 
 ```bash
 curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/call \
@@ -143,9 +145,9 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/call \
   }'
 ```
 
-## 配置为 MCP 服务器
+## Configure as MCP Server
 
-你可以将代理服务器中的任何服务器配置为其他 MCP 客户端的服务器：
+You can configure any server in the proxy as a server for other MCP clients:
 
 ```json
 {
@@ -167,84 +169,84 @@ curl -X POST http://localhost:3000/api/servers/filesystem/mcp/tools/call \
 }
 ```
 
-### 服务器端点格式
+### Server Endpoint Format
 
-每个服务器的 MCP 协议端点格式为：`/api/servers/{serverId}/mcp`
+The MCP protocol endpoint format for each server is: `/api/servers/{serverId}/mcp`
 
-例如：
+Examples:
 - `http://localhost:3000/api/servers/filesystem/mcp`
 - `http://localhost:3000/api/servers/notion/mcp`
 - `http://localhost:3000/api/servers/github/mcp`
 
-## API 端点
+## API Endpoints
 
-### 常规端点
+### Regular Endpoints
 
-- `GET /api/health` - 健康检查
-- `GET /api/metrics` - 性能指标
-- `GET /api/servers` - 服务器状态
-- `GET /api/servers/:id` - 特定服务器状态
-- `POST /api/servers/:id/refresh` - 刷新服务器状态
-- `GET /api/tools` - 所有可用工具
-- `GET /api/servers/:id/tools` - 特定服务器的工具
-- `POST /api/call` - 调用工具
-- `POST /api/servers/:id/tools/:toolName` - 调用特定服务器的特定工具
-- `POST /api/batch-call` - 批量调用工具
-- `GET /api/info` - API 信息
+- `GET /api/health` - Health check
+- `GET /api/metrics` - Performance metrics
+- `GET /api/servers` - Server status
+- `GET /api/servers/:id` - Specific server status
+- `POST /api/servers/:id/refresh` - Refresh server status
+- `GET /api/tools` - All available tools
+- `GET /api/servers/:id/tools` - Tools for specific server
+- `POST /api/call` - Call tools
+- `POST /api/servers/:id/tools/:toolName` - Call specific tool on specific server
+- `POST /api/batch-call` - Batch call tools
+- `GET /api/info` - API information
 
-### MCP 协议端点（每个服务器）
+### MCP Protocol Endpoints (per server)
 
-- `POST /api/servers/:id/mcp/initialize` - MCP 初始化
-- `POST /api/servers/:id/mcp/tools/list` - MCP 工具列表
-- `POST /api/servers/:id/mcp/tools/call` - MCP 工具调用
-- `POST /api/servers/:id/mcp` - 通用 MCP 端点
+- `POST /api/servers/:id/mcp/initialize` - MCP initialization
+- `POST /api/servers/:id/mcp/tools/list` - MCP tools list
+- `POST /api/servers/:id/mcp/tools/call` - MCP tool call
+- `POST /api/servers/:id/mcp` - Generic MCP endpoint
 
-## 测试
+## Testing
 
-运行测试脚本：
+Run the test script:
 
 ```bash
 node test-mcp-protocol.js
 ```
 
-## 开发
+## Development
 
-### 构建
+### Build
 
 ```bash
 npm run build
 ```
 
-### 开发模式
+### Development Mode
 
 ```bash
 npm run dev
 ```
 
-## 配置说明
+## Configuration
 
-### 代理配置
+### Proxy Configuration
 
-- `port`: 服务器端口
-- `host`: 服务器主机
-- `cors`: 是否启用 CORS
-- `rateLimit`: 请求限制
-- `requestTimeout`: 请求超时时间
-- `maxRequestSize`: 最大请求大小
-- `enableMetrics`: 是否启用指标
-- `enableLogging`: 是否启用日志
+- `port`: Server port
+- `host`: Server host
+- `cors`: Enable CORS
+- `rateLimit`: Request rate limit
+- `requestTimeout`: Request timeout
+- `maxRequestSize`: Maximum request size
+- `enableMetrics`: Enable metrics
+- `enableLogging`: Enable logging
 
-### 服务器配置
+### Server Configuration
 
-- `name`: 服务器名称
-- `description`: 服务器描述
-- `type`: 服务器类型 (stdio/http/websocket)
-- `enabled`: 是否启用
-- `transport`: 传输配置
+- `name`: Server name
+- `description`: Server description
+- `type`: Server type (stdio/http/websocket)
+- `enabled`: Enable/disable server
+- `transport`: Transport configuration
 
-### 传输配置
+### Transport Configuration
 
-#### stdio 传输
+#### stdio Transport
 
 ```json
 {
@@ -256,7 +258,7 @@ npm run dev
 }
 ```
 
-#### HTTP 传输
+#### HTTP Transport
 
 ```json
 {
@@ -267,7 +269,7 @@ npm run dev
 }
 ```
 
-#### WebSocket 传输
+#### WebSocket Transport
 
 ```json
 {
@@ -277,6 +279,14 @@ npm run dev
 }
 ```
 
-## 许可证
+## Use Cases
+
+1. **Unified Management**: Manage multiple MCP servers through a single proxy
+2. **Protocol Conversion**: Convert stdio/WebSocket servers to HTTP access
+3. **Load Balancing**: Distribute requests across multiple proxy instances
+4. **Monitoring Integration**: Unified monitoring and logging
+5. **Security Control**: Unified authentication and authorization
+
+## License
 
 MIT 
