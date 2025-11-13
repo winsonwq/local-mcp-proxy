@@ -1,6 +1,6 @@
 {
   "proxy": {
-    "port": 3000,
+    "port": 3001,
     "host": "0.0.0.0",
     "cors": true,
     "rateLimit": 1000,
@@ -21,8 +21,7 @@
         "args": [
           "-y",
           "@modelcontextprotocol/server-filesystem",
-          "/Users/aqiu/Desktop",
-          "/Users/aqiu/projects"
+          "/Users/aqiu/Downloads/mcptest"
         ],
         "workingDir": ".",
         "env": {
